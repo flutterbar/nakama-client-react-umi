@@ -1,7 +1,7 @@
-# nakama react客户端
->基于umi.js的ts项目，ui使用antd
+# nakama react client 
+>dependent on  umi.js framework, ui lib is antd. project is write by typescript.
 
-启动项目
+### Start
 ```
 yarn start
 ```
