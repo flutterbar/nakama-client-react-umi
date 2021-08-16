@@ -1,0 +1,20 @@
+{
+  "scripts": {
+    "start": "cross-env umi dev"
+  },
+  "dependencies": {
+    "@umijs/plugin-dva": "^0.13.0",
+    "antd": "^4.16.11",
+    "dva": "^2.4.1",
+    "dva-logger": "^1.0.0",
+    "umi": "^3.5.17"
+  },
+  "optionalDependencies": {
+    "puppeteer": "^1.10.0"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not ie <= 10"
+  ]
+}
