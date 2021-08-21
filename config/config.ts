@@ -1,5 +1,9 @@
 import routes from './routes';
 export default {
+  antd: {
+    dark: false,
+    compact: true,
+  },
     // base: '/docs/',
     routes: routes,
     publicPath: '/static/',
@@ -13,4 +17,5 @@ export default {
       disableModelsReExport: true,
       lazyLoad: true,
     },
+    mfsu: {},
   }
