@@ -4,6 +4,9 @@ import { connect } from "dva";
 import { Iconnect } from "@/models/connect";
 import { netInit } from "@/infra/net";
 import { Button, Form, Input } from "antd";
+import { ApiReadStorageObjectsRequest } from "@heroiclabs/nakama-js/dist/api.gen";
+import { WriteStorageObject } from "@heroiclabs/nakama-js";
+import { IplayerInfo } from '../dto/player';
 export interface IindexProps {
   connect: Iconnect;
   dispatch: Function;
@@ -20,33 +23,55 @@ export default class IndexPage extends React.Component<any, IindexProps> {
   constructor(props) {
     super(props);
     console.log("props", props);
-    // props.dispatch({type: "connect/add",payload: 2})
+   
     netInit(props.dispatch);
+
+    //获得账号信息
+    props.dispatch({type: "connect/fetchAccount"})
   }
 
   render() {
     const { status } = this.props.connect;
     return (
       <div>
-        {/* <h1 className={styles.title}>Page index</h1> */}
-        <Button onClick={this.onClickLoginOut}>登出</Button>
-        {!this.props.connect.account && this.renderLogin()}
-        
-        {/* <Button type="primary" onClick={this.onClickLogin} size="large">
-          登陆
-        </Button> */}
-        {this.props.connect.session && (
-          <div>{JSON.stringify(this.props.connect.session)}</div>
-        )}
-
-        {this.props.connect.account && (
-          <div>
-            玩家基础信息：
-            <div>{JSON.stringify(this.props.connect.account)}</div>
-          </div>
-        )}
+        {this.props.connect.account? this.renderLobby():this.renderLogin()}    
       </div>
     );
+  }
+
+  //渲染大厅页面
+  renderLobby(){
+    const {connect} = this.props
+    return (<div>
+       <Button onClick={this.onClickLoginOut}>登出</Button>
+
+      {connect.session && (
+          <div>
+              token信息 ：
+              <div>{JSON.stringify(connect.session)}</div>
+          </div>
+          
+        )}
+
+        {connect.account && (
+          <div>
+            用户基础信息：
+            <div>{JSON.stringify(connect.account)}</div>
+          </div>
+        )}
+
+        {/* 玩家信息 */}
+        {connect.playerInfo && (
+           <div>
+           玩家信息：
+           <div>{JSON.stringify(connect.playerInfo)}</div>
+         </div>
+        )}
+
+        <Button onClick={this.onClickRead}>读取玩家信息</Button>
+
+        <Button onClick={this.onClickWrite}>写入玩家信息</Button>
+    </div>)
   }
 
   //渲染登陆
@@ -74,4 +99,36 @@ export default class IndexPage extends React.Component<any, IindexProps> {
   onClickLoginOut = ()=>{
     this.props.dispatch({ type: "connect/logOut" });
   }
+
+  onClickRead = ()=>{
+
+    let readData: ApiReadStorageObjectsRequest = {
+      object_ids:[{
+        collection:"player",
+        key:"baseInfo",
+        user_id:this.props.connect.session.user_id
+      }]
+    }
+    this.props.dispatch({ type: "connect/fetchReadObjects",payload:{readName:"playerInfo",data:readData}})
+  }
+
+  onClickWrite = ()=>{
+    let baseInfo: IplayerInfo = {
+      exp: 10,
+      atk:10,
+      level:1,
+      wins:1,
+      fail:1,
+      pets: 100,
+    }
+    let writeData: Array<WriteStorageObject> = [
+      {
+        collection:"player",
+        key:"baseInfo",
+        value:baseInfo
+      }
+    ]
+    this.props.dispatch({type:"connect/fetchWriteObjects",payload:writeData})
+  }
+
 }

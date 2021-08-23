@@ -1,15 +1,25 @@
 /**
  * 网络连接基础设施
  */
-import { Client,Session } from "@heroiclabs/nakama-js";
-import { ApiAccount } from "@heroiclabs/nakama-js/dist/api.gen";
-let storeDiapatch = {}
+import { Client,Session, StorageObjects, WriteStorageObject } from "@heroiclabs/nakama-js";
+import { ApiAccount, ApiReadStorageObjectsRequest } from "@heroiclabs/nakama-js/dist/api.gen";
+import { getLocalStore, setLocalSore } from './utils';
+let storeDiapatch = null;
 let nakamaClient: Client = null;
 let session:Session = null;
 //初始化
 export function netInit(dispatch: Function) {
     storeDiapatch = dispatch
-    nakamaClient = new Client("defaultkey", "127.0.0.1", "7350", false)
+    nakamaClient = new Client("defaultkey", "127.0.0.1", "7350", false )
+
+    //从本地获得session
+    const sessionJson = getLocalStore("nakama-session")
+    if(sessionJson){
+        const newSession = JSON.parse(sessionJson)
+        console.log("从store获得的session",newSession)
+        session = new Session(newSession.token, newSession.refresh_token, newSession.created)
+        storeDiapatch({type:"connect/setSession",payload:{session}})
+    }
 }
 
 
@@ -23,6 +33,8 @@ export async function loginByEmail(params) {
     const sess = await nakamaClient.authenticateEmail(params.email, params.password, create, nickname)
     session = sess
     console.debug("logins Succes", session);
+    setLocalSore("nakama-session",session)
+    //session写入本地缓存
     return session
 }
 
@@ -30,4 +42,15 @@ export async function loginByEmail(params) {
 export async function getAccount():Promise<ApiAccount> {
     const account = await nakamaClient.getAccount(session)
     return account
+}
+
+//write数据
+export async function writeStorageObjects(objects: Array<WriteStorageObject>){
+
+    await nakamaClient.writeStorageObjects(session,objects)
+}
+
+//read数据
+export async function readStorageObjects(request: ApiReadStorageObjectsRequest): Promise<StorageObjects>{
+    return nakamaClient.readStorageObjects(session,request)
 }
