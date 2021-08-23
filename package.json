@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "start": "cross-env umi dev"
+    "start": "umi dev"
   },
   "dependencies": {
     "@heroiclabs/nakama-js": "^2.3.0",

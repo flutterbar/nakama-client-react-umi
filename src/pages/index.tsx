@@ -2,8 +2,9 @@ import React from "react";
 import styles from "./index.less";
 import { connect } from "dva";
 import { Iconnect } from "@/models/connect";
-import { netInit } from "@/infra/net";
+import { initNetWork } from "@/network/init";
 import { Button, Form, Input } from "antd";
+import { NavLink } from 'umi';
 import { ApiReadStorageObjectsRequest } from "@heroiclabs/nakama-js/dist/api.gen";
 import { WriteStorageObject } from "@heroiclabs/nakama-js";
 import { IplayerInfo } from '../dto/player';
@@ -24,7 +25,7 @@ export default class IndexPage extends React.Component<any, IindexProps> {
     super(props);
     console.log("props", props);
    
-    netInit(props.dispatch);
+    initNetWork(props.dispatch);
 
     //获得账号信息
     props.dispatch({type: "connect/fetchAccount"})
@@ -71,6 +72,11 @@ export default class IndexPage extends React.Component<any, IindexProps> {
         <Button onClick={this.onClickRead}>读取玩家信息</Button>
 
         <Button onClick={this.onClickWrite}>写入玩家信息</Button>
+
+        <div>
+          <div>菜单栏</div>
+          <NavLink to="/Friend">好友</NavLink>
+        </div>
     </div>)
   }
 
