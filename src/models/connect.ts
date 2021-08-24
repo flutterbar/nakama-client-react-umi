@@ -1,5 +1,5 @@
-import { getAccount, loginByEmail, readStorageObjects, writeStorageObjects } from '../infra/net'
-
+import { getAccount, readStorageObjects, writeStorageObjects } from '@/network/api/account'
+import {authByEmail,startSocket} from '@/network/init'
 import { Session, StorageObjects } from '@heroiclabs/nakama-js';
 import { message } from 'antd';
 import { ApiAccount } from '@heroiclabs/nakama-js/dist/api.gen';
@@ -23,7 +23,7 @@ export default {
 
         *fetchLogin({ payload }, { call, put }) {
             try {
-                const session = yield call(loginByEmail,payload)
+                const session = yield call(authByEmail,payload)
                 yield put({type:"setSession",payload:{session}})
                 yield put({type:"fetchAccount"})
 
@@ -35,6 +35,9 @@ export default {
         *fetchAccount({ payload }, { call, put }){
             try {                
                 const account = yield call(getAccount)
+                //启动socket连接
+                yield call(startSocket)
+                
                 yield put({type:"setAccount",payload:{account}})
             }catch (e) {
                 console.error(e)
