@@ -7,5 +7,9 @@ export default [
         {
             path:'/friend',
             component:'@/pages/Friend/Friend'
+        },
+        {
+            path:'chat',
+            component: '@/pages/Chat/index'
         }
     ]

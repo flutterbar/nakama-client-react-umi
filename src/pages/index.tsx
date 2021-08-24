@@ -76,6 +76,8 @@ export default class IndexPage extends React.Component<any, IindexProps> {
         <div>
           <div>菜单栏</div>
           <NavLink to="/Friend">好友</NavLink>
+          <div>--------</div>
+          <NavLink to="/Chat">聊天</NavLink>
         </div>
     </div>)
   }
