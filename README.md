@@ -1,5 +1,5 @@
 # nakama react client 
->dependent on  umi.js framework, ui lib is antd. project is write by typescript.
+>зависит от фреймворка umi.js, ui lib — это antd. проект пишется на typescript.
 
 ## Start
 ```
@@ -7,13 +7,13 @@ yarn start
 ```
 
 
-## demo展示功能
+## demo Функция отображения
 
 * authEmail
 * getAccount
 * writeStorage
 * readStorege
 * chat
-    - 世界频道
-    - 群组
-    - 私聊
+    - Мировой канал
+     - Группа
+     - приватный чат 
