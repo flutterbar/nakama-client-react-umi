@@ -1,5 +1,5 @@
 /**
- * 网络连接基础设施
+ * инфраструктура сетевых подключений
  */
  import { Client,Session, Socket, StorageObjects, WriteStorageObject } from "@heroiclabs/nakama-js";
  import { ApiAccount, ApiReadStorageObjectsRequest } from "@heroiclabs/nakama-js/dist/api.gen";
@@ -13,24 +13,24 @@
  let nakamaSocket: Socket = null
 
 
- //初始化网络连接
+ //Инициализировать сетевое подключение
  export function initNetWork(dispatch: Function) {
     storeDiapatch = dispatch
-    nakamaClient = new Client("defaultkey", "127.0.0.1", "7350", false )
+    nakamaClient = new Client("defaultkey", "172.31.221.37", "7350", false )
 
-    //从本地获得session
+    //получить сеанс от локального 
     const sessionJson = getLocalStore("nakama-session")
     if(sessionJson){
         const newSession = JSON.parse(sessionJson)
-        console.log("从store获得的session",newSession)
+        console.log("Сессия получена из магазина",newSession)
         session = new Session(newSession.token, newSession.refresh_token, newSession.created)
         storeDiapatch({type:"connect/setSession",payload:{session}})
-        //开启api
+        //открыть API 
         startApi()
     }
 }
 
-//开启socket连接
+//Открытое сокетное соединение 
 export async function startSocket() {
     nakamaSocket = nakamaClient.createSocket();
     session = await nakamaSocket.connect(session,true);
@@ -38,25 +38,25 @@ export async function startSocket() {
     initChat(nakamaSocket,session)
 }
 
-//开启api连接
+//открыть API-соединение 
 function startApi(){
     initAccount(nakamaClient,session)
 }
 
 
-//邮箱登陆认证
+//Аутентификация входа по электронной почте 
 export async function authByEmail(params) {
     // var email = "217@163.com";
     // var password = "c77882507788";
     var create = true;
-    var nickname = params.email+"的昵称"
-    //如果不存在，则新建
+    var nickname = params.email+"прозвище"
+    //Если его нет, создайте новый 
     const sess = await nakamaClient.authenticateEmail(params.email, params.password, create, nickname)
     session = sess
     console.debug("logins Succes", session);
-    //session写入本地缓存
+    //session записать в локальный кеш 
     setLocalSore("nakama-session",session)
-    //开启api
+    //включи api
     startApi()
     return session
 }
